@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#define SIZE 3
+void prepareKeyMatrix(char key[], int keyMatrix[SIZE][SIZE]) {
+    int k = 0;
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            keyMatrix[i][j] = (key[k]) % 65;
+            k++;
+        }
+    }
+}
+void encrypt(char message[], int keyMatrix[SIZE][SIZE]) {
+    int messageVector[SIZE];
+    int cipherMatrix[SIZE];
+
+    for (int i = 0; i < strlen(message); i++) {
+        messageVector[i] = message[i] % 65;
+    }
+
+    for (int i = 0; i < SIZE; i++) {
+        cipherMatrix[i] = 0;
+        for (int j = 0; j < SIZE; j++) {
+            cipherMatrix[i] += keyMatrix[i][j] * messageVector[j];
+        }
+        cipherMatrix[i] %= 26;
+    }
+
+    printf("Encrypted Cipher Text: ");
+    for (int i = 0; i < SIZE; i++) {
+        printf("%c", cipherMatrix[i] + 65);
+    }
+}
+
+int main() {
+    char key[] = "GYBNQKURP";
+    char message[100];
+    int keyMatrix[SIZE][SIZE];
+
+    printf("Enter the message to encrypt: ");
+    scanf(" %[^\n]s", message);
+
+    prepareKeyMatrix(key, keyMatrix);
+
+    printf("Original message: %s\n", message);
+    
+    encrypt(message, keyMatrix);
+
+    return 0;
+}
