@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define LOG_FILE "system_log.txt"
+void detectIntrusion() {
+    FILE *file;
+    char line[256];
+
+    file = fopen(LOG_FILE, "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        exit(1);
+    }
+
+    while (fgets(line, sizeof(line), file)) {
+    
+        if (strstr(line, "SQL injection") != NULL) {
+            printf("Intrusion detected: %s", line);
+        }
+    }
+
+    fclose(file);
+}
+
+int main() {
+    
+    FILE *file = fopen(LOG_FILE, "w");
+    if (file == NULL) {
+        perror("Error opening file");
+        exit(1);
+    }
+    fprintf(file, "User attempted SQL injection\n");
+    fprintf(file, "User logged in\n");
+    fprintf(file, "User attempted SQL injection again\n");
+    fclose(file);
+
+    detectIntrusion();
+
+    return 0;
+}
