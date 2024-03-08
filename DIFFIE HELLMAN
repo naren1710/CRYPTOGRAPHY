@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <math.h>
+
+long long int mod_exp(long long int base, long long int exp, long long int mod) {
+    long long int result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 == 1)
+            result = (result * base) % mod;
+        exp = exp >> 1;
+        base = (base * base) % mod;
+    }
+    return result;
+}
+
+long long int primitive_root(long long int prime) {
+    long long int root = 2;
+    while (1) {
+        int flag = 1;
+        for (long long int i = 2; i < prime - 1; i++) {
+            if (mod_exp(root, i, prime) == 1) {
+                flag = 0;
+                break;
+            }
+        }
+        if (flag)
+            return root;
+        root++;
+    }
+}
+
+int main() {
+    long long int prime, base, a, b;
+    long long int A, B;
+
+    printf("Enter a prime number (p): ");
+    scanf("%lld", &prime);
+
+    base = primitive_root(prime);
+    printf("Primitive root (g): %lld\n", base);
+
+    printf("Enter Person A's private key (a): ");
+    scanf("%lld", &a);
+
+    printf("Enter Person B's private key (b): ");
+    scanf("%lld", &b);
+
+    A = mod_exp(base, a, prime);
+    printf("Person A's public key (A): %lld\n", A);
+
+    B = mod_exp(base, b, prime);
+    printf("Person B's public key (B): %lld\n", B);
+
+    long long int shared_secret_A = mod_exp(B, a, prime);
+    printf("Shared secret computed by Person A: %lld\n", shared_secret_A);
+
+    long long int shared_secret_B = mod_exp(A, b, prime);
+    printf("Shared secret computed by Person B: %lld\n", shared_secret_B);
+
+    return 0;
+}
