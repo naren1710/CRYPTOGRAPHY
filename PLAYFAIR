@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define SIZE 5 
+void prepareKey(char key[SIZE][SIZE], const char* inputKey) {
+    int flag, k = 0, l = 0;
+    char tempKey[26] = {0}; 
+    for (int i = 0; inputKey[i] != '\0'; i++) {
+        flag = 0;
+        for (int j = 0; tempKey[j] != '\0'; j++) {
+            if (tempKey[j] == toupper(inputKey[i])) {
+                flag = 1;
+                break;
+            }
+        }
+        if (flag == 0) {
+            tempKey[k++] = toupper(inputKey[i]);
+            if (tempKey[k-1] == 'J') tempKey[k-1] = 'I'; 
+        }
+    }
+
+    for (char ch = 'A'; ch <= 'Z'; ch++) {
+        if (ch == 'J') continue; 
+        flag = 0;
+        for (int i = 0; i < k; i++) {
+            if (tempKey[i] == ch) {
+                flag = 1;
+                break;
+            }
+        }
+        if (flag == 0) tempKey[k++] = ch;
+    }
+
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            key[i][j] = tempKey[l++];
+        }
+    }
+}
+
+
+void displayKeyMatrix(char key[SIZE][SIZE]) {
+    printf("Key Matrix:\n");
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            printf("%c ", key[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void getPosition(char key[SIZE][SIZE], char ch, int* row, int* col) {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (key[i][j] == ch) {
+                *row = i;
+                *col = j;
+                return;
+            }
+        }
+    }
+}
+
+void encryptDigraph(char key[SIZE][SIZE], char a, char b, char* encrypted) {
+    int row1, col1, row2, col2;
+    getPosition(key, a, &row1, &col1);
+    getPosition(key, b, &row2, &col2);
+
+    if (row1 == row2) {
+        
+        encrypted[0] = key[row1][(col1 + 1) % SIZE];
+        encrypted[1] = key[row2][(col2 + 1) % SIZE];
+    } else if (col1 == col2) {
+        
+        encrypted[0] = key[(row1 + 1) % SIZE][col1];
+        encrypted[1] = key[(row2 + 1) % SIZE][col2];
+    } else {
+        
+        encrypted[0] = key[row1][col2];
+        encrypted[1] = key[row2][col1];
+    }
+}
+
+void encrypt(char key[SIZE][SIZE], const char* plaintext, char* ciphertext) {
+    int i = 0, j = 0;
+    while (plaintext[i] != '\0') {
+        char a = toupper(plaintext[i++]);
+        char b = toupper(plaintext[i++]);
+
+        if (a == 'J') a = 'I';
+        if (b == 'J') b = 'I';
+
+        if (a == b) {
+            b = 'X';
+            i--; 
+        }
+
+        if (a == '\0') a = 'X'; 
+        if (b == '\0') b = 'X';
+
+        encryptDigraph(key, a, b, &ciphertext[j]);
+        j += 2;
+    }
+    ciphertext[j] = '\0'; 
+}
+
+int main() {
+    char keyMatrix[SIZE][SIZE];
+    char key[] = "Monarchy"; 
+    char plaintext[] = "Balloon";
+    char ciphertext[100] = {0}; 
+    prepareKey(keyMatrix, key);
+
+    displayKeyMatrix(keyMatrix);
+
+    encrypt(keyMatrix, plaintext, ciphertext);
+
+    printf("Original plaintext: %s\n", plaintext);
+    printf("Encrypted ciphertext: %s\n", ciphertext);
+
+    return 0;
+}
