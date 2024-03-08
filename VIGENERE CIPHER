@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <conio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+void encipher();
+void decipher();
+
+int main() {
+    int choice;
+    while (1) {
+        printf("\n1. Encrypt Text");
+        printf("\t2. Decrypt Text");
+        printf("\t3. Exit");
+        printf("\n\nEnter Your Choice : ");
+        scanf("%d", &choice);
+
+        if (choice == 3) {
+            printf("Exiting the program.\n");
+            exit(0);
+        } else if (choice == 1)
+            encipher();
+        else if (choice == 2)
+            decipher();
+        else
+            printf("Please Enter Valid Option.");
+    }
+}
+
+void encipher() {
+    char input[100], key[10];
+    printf("\n\nEnter Plain Text:\n");
+    getchar(); // Clear newline character from the buffer
+    fgets(input, sizeof(input), stdin);
+    printf("\nEnter Key Value: ");
+    scanf("%s", key);
+    printf("\nResultant Cipher Text: ");
+    
+    for (int i = 0, j = 0; i < strlen(input); i++) {
+        if (isalpha(input[i])) {
+            int keyIndex = j % strlen(key);
+            char currentKey = toupper(key[keyIndex]) - 'A';
+            char currentChar = toupper(input[i]) - 'A';
+            char encryptedChar = ((currentChar + currentKey) % 26) + 'A';
+            printf("%c", encryptedChar);
+            if (isalpha(input[i]))
+                j++;
+        } else {
+            printf("%c", input[i]);
+        }
+    }
+}
+
+void decipher() {
+    char input[100], key[10];
+    printf("\n\nEnter Cipher Text:\n");
+    getchar(); // Clear newline character from the buffer
+    fgets(input, sizeof(input), stdin);
+    printf("\n\nEnter the key value: ");
+    scanf("%s", key);
+
+    for (int i = 0, j = 0; i < strlen(input); i++) {
+        if (isalpha(input[i])) {
+            int keyIndex = j % strlen(key);
+            char currentKey = toupper(key[keyIndex]) - 'A';
+            char currentChar = toupper(input[i]) - 'A';
+            char decryptedChar = ((currentChar - currentKey + 26) % 26) + 'A';
+            printf("%c", decryptedChar);
+            if (isalpha(input[i]))
+                j++;
+        } else {
+            printf("%c", input[i]);
+        }
+    }
+}
+
