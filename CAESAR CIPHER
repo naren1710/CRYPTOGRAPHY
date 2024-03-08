@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+void encrypt(char *plaintext, int key) {
+    int i = 0;
+    char ch;
+    while (plaintext[i]) {
+        ch = plaintext[i];
+        if(ch >= 'a' && ch <= 'z'){
+            ch = ch + key;
+            if (ch > 'z') {
+                ch = ch - 'z' + 'a' - 1;
+            }
+            plaintext[i] = ch;
+        } else if(ch >= 'A' && ch <= 'Z'){ 
+            ch = ch + key;
+            if (ch > 'Z') {
+                ch = ch - 'Z' + 'A' - 1;
+            }
+            plaintext[i] = ch;
+        }
+        i++;
+    }
+    printf("Encrypted message: %s\n", plaintext);
+}
+
+void decrypt(char *ciphertext, int key) {
+    int i = 0;
+    char ch;
+    while (ciphertext[i]) {
+        ch = ciphertext[i];
+        if(ch >= 'a' && ch <= 'z'){ 
+            ch = ch - key;
+            if (ch < 'a') {
+                ch = ch + 'z' - 'a' + 1;
+            }
+            ciphertext[i] = ch;
+        } else if(ch >= 'A' && ch <= 'Z'){
+            ch = ch - key;
+            if (ch < 'A') {
+                ch = ch + 'Z' - 'A' + 1;
+            }
+            ciphertext[i] = ch;
+        }
+        i++;
+    }
+    printf("Decrypted message: %s\n", ciphertext);
+}
+
+int main() {
+    char message[100];
+    int key;
+
+    printf("Enter a message: ");
+    fgets(message, sizeof(message), stdin); 
+    message[strcspn(message, "\n")] = 0;
+
+    printf("Enter key: ");
+    scanf("%d", &key);
+
+    key = key % 26;
+
+    encrypt(message, key);
+    decrypt(message, key);
+
+    return 0;
+}
